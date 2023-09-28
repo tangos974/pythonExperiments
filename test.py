@@ -25,9 +25,13 @@ print(np.arange(4))
 print(type(np.arange(2)))
 """
 
-
+"""
 #Generate numbers from -10 to 10 with 100 steps in between
 x = np.linspace(-10, 10, 100)
 y = np.sin(x)
 #plot displays graph
 plt.plot(x, y)
+plt.show()
+"""
+
+
