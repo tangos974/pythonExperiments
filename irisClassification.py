@@ -32,8 +32,10 @@ print(iris_dataset['target'])
 X_train, X_test, y_train, y_test = train_test_split(iris_dataset['data'], iris_dataset['target'], random_state=0)
 
 """
-print(X_train.shape)
-print(X_test.shape)
+print(X_train.shape) #75% of row
+print(X_test.shape)  #Remaining 25%
 print(y_train.shape)
 print(y_test.shape)
 """
+
+
