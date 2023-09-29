@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
 
 iris_dataset = load_iris()
 #this function returns a bunch object, similar to a python dict
@@ -38,4 +39,30 @@ print(y_train.shape)
 print(y_test.shape)
 """
 
+#knn for k nearest neighbors is a very simple machine learning
+#model, we will do k=1
+knn = KNeighborsClassifier(n_neighbors=1)
+#like every scikit machine learning model this is called an
+#estimator class. We can use the fit method to train it
+knn.fit(X_train, y_train)
+ 
+#The instance knn is now trained!
+#Let's try it out:
+X_new = np.array([[3, 4, 3, 0.8]])
+#scikit always expects 2D numpy arrays
 
+"""
+prediction = knn.predict(X_new)
+print(prediction, iris_dataset['target_names'][prediction])
+#0:setosa
+"""
+
+#How can we see if our model is correct? That is why we have
+#X_test!
+#print(y_test)
+
+y_pred = knn.predict(X_test)
+#print(y_pred)
+
+print("Score : {:.2f}".format(np.mean(y_pred == y_test)))
+#print(np.mean(y_pred == y_test))
