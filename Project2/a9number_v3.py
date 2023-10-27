@@ -11,12 +11,42 @@ In order to see the profiling, you need to add the option -s
 def count_occurrences_in_text(word, text):
     """
     Return the number of occurrences of the passed word (case insensitive) in text
+    Trims text of the following characters : .,?!;:()[]{}"
+    'word' can be either a single word or a series of word in between single quotes separated by empty spaces
     """
 
-    # TODO: your code goes here, but it's OK to add new functions or import modules if needed
+    #Lowercases both string so that comparisons are case insensitive
+    word = word.lower()
+    text = text.lower()
 
-    # This does not pass the unittests:
-    return text.count(word)
+    #Replace each punctuation in the text with an empty space
+    punctuation = '.,?!;:()[]{}"'
+    for char in punctuation:
+        text = text.replace(char, ' ')
+
+
+    #Splits the text into list of words using empty space as separator
+    text = text.split()
+
+    #Initialize result variable
+    count_occurences = 0
+
+    #Go through the words in the text
+    for word_or_sent in text:
+        if word_or_sent == word:
+            count_occurences += 1
+    return count_occurences
+
+
+"""def is_sentence(word):
+    # Check if a word is enclosed in single quotes
+    return word.startswith("'")
+
+def trim_sentence(sentence):
+    # ???
+    print(sentence)
+    #return ' ' + sentence"""
+
 
 
 def test_count_occurrences_in_text():
@@ -175,7 +205,14 @@ def doit():
     return i
 
 
-def test_profile():
+"""def test_profile():
     with cProfile.Profile() as pr:
         assert doit() == 2000
+        pr.print_stats()"""
+
+def test_profile():
+    with cProfile.Profile() as pr:
+        assert 1 == count_occurrences_in_text(
+        "'reflexion mirror'", "I am a senior citizen and I live in the Fun-Plex 'Reflexion Mirror' in Sopchoppy, Florida"
+    )
         pr.print_stats()
