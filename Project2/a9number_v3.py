@@ -1,7 +1,4 @@
 import cProfile
-import csv
-from io import StringIO
-
 
 """In order to run the tests simply run
 
@@ -16,6 +13,7 @@ def count_occurrences_in_text(word, text):
     Return the number of occurrences of the passed word (case insensitive) in text
     Trims text of the following characters : .,?!;:()[]{}"
     'word' can be either a single word or a series of word separated by empty spaces
+    If argument word contains either '' or __, gets rid of all ' and _ characters after trim
     """
     #Lowercases both string so that comparisons are case insensitive
     word = word.lower()
@@ -57,7 +55,6 @@ def count_occurrences_in_text(word, text):
         
         return count_occurences
 
-#count_occurrences_in_text("Linguist", "'''Linguist Specialist Found Dead on Laboratory Floor'''")
 
 def test_count_occurrences_in_text():
     text = """Georges is my name and I like python. Oh ! your name is georges? And you like Python!
