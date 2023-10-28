@@ -1,5 +1,5 @@
 import cProfile
-from functools import lru_cache
+import pandas as pd
 
 """In order to run the tests simply run
 
@@ -8,56 +8,53 @@ python -m pytest a9number_v3.py
 In order to see the profiling, you need to add the option -s
 """
 
-@lru_cache(maxsize=2**8)
+
 def count_occurrences_in_text(word, text):
     """
     Return the number of occurrences of the passed word (case insensitive) in text
-    Trims text of the following characters : ,_.!?:\'
+    Trims text of the following characters : .,?!;:()[]{}"
     'word' can be either a single word or a series of word separated by empty spaces
-    If argument word contains either '' or __, gets rid of all ' and _ characters
+    If argument word contains either '' or __, gets rid of all ' and _ characters after trim
     """
     #Lowercases both string so that comparisons are case insensitive
-    word, text = word.lower(), text.lower()
-    
-    #Initialize result variable
-    count_occurences = 0
-
-    #Initialize set of symbols to remove from text
-    punctuation = ',_.!?:\''
-
+    word = word.lower()
+    text = text.lower()
 
     #Case where pattern is a sentence
-    if ' ' in word:
-        #Remove space and punctuation from word 
-        for char in punctuation + ' ':
-            word = word.replace(char, '')
-
-        #Remove space and punctuation except : from text 
-        for char in ',_.!?\' ':
-            text = text.replace(char, '')
-        #Call to recursive function        
-        return word in text 
-    
+    if ' ' in word: 
+        if text.find(word) >= 0:
+            return 1
+        return 0
 
     #Case where pattern is a simple word
     else:
-        #Remove space and punctuation from text 
+        #Replace each punctuation in the text with an empty space
+        punctuation = '.,?!;:()[]{}_"'
         for char in punctuation:
-            if char != "'":
-                text = text.replace(char, ' ')
-            else:
-                if("''" in text):
-                    text = text.replace(char, '')
+            text = text.replace(char, ' ')
 
-        #Split the text into list of words using empty space as separator
+        #Splits the text into list of words using empty space as separator
         text = text.split()
 
+        #Initialize result variable
+        count_occurences = 0
+
         #Go through the words in the text
-        count_occurences = sum(1 for elem in text if word == elem)
+        for elem in text:
+            ##Handling of case where text starts or finishes with several ' or _ characters
+            if "''" in elem or "__" in elem:
+                trimmed_elem = ''
+                for char in elem:
+                    if char != "\'" and char != "_":
+                        trimmed_elem += char
+                if trimmed_elem == word:
+                    count_occurences += 1
+            #Normal case
+            else:   #
+                if elem == word:
+                    count_occurences +=1
         
         return count_occurences
-    
-
 
 
 def test_count_occurrences_in_text():
@@ -216,9 +213,9 @@ def doit():
     return i
 
 
-
+#"""
 def test_profile():
     with cProfile.Profile() as pr:
         assert doit() == 2000
         pr.print_stats()
-
+#"""

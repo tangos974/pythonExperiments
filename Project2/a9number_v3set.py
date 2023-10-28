@@ -1,5 +1,4 @@
-import cProfile
-from functools import lru_cache
+import cProfile, string, re
 
 """In order to run the tests simply run
 
@@ -8,55 +7,68 @@ python -m pytest a9number_v3.py
 In order to see the profiling, you need to add the option -s
 """
 
-@lru_cache(maxsize=2**8)
+
 def count_occurrences_in_text(word, text):
     """
     Return the number of occurrences of the passed word (case insensitive) in text
-    Trims text of the following characters : ,_.!?:\'
     'word' can be either a single word or a series of word separated by empty spaces
-    If argument word contains either '' or __, gets rid of all ' and _ characters
+    If argument word contains either '' or __, gets rid of all ' and _ characters after trim
     """
     #Lowercases both string so that comparisons are case insensitive
-    word, text = word.lower(), text.lower()
+    word = filter_text(word)
+    text = filter_text(text)
     
+    #print(word)
+    #print(text)
+
     #Initialize result variable
     count_occurences = 0
 
-    #Initialize set of symbols to remove from text
-    punctuation = ',_.!?:\''
-
-
     #Case where pattern is a sentence
-    if ' ' in word:
-        #Remove space and punctuation from word 
-        for char in punctuation + ' ':
-            word = word.replace(char, '')
-
-        #Remove space and punctuation except : from text 
-        for char in ',_.!?\' ':
-            text = text.replace(char, '')
-        #Call to recursive function        
-        return word in text 
-    
-
-    #Case where pattern is a simple word
+    if ' ' in word: 
+        if text.find(word) >= 0:
+            return 1
+        return 0
     else:
-        #Remove space and punctuation from text 
-        for char in punctuation:
-            if char != "'":
-                text = text.replace(char, ' ')
-            else:
-                if("''" in text):
-                    text = text.replace(char, '')
-
-        #Split the text into list of words using empty space as separator
+        #Splits the text into list of words using empty space as separator
         text = text.split()
-
+        #print(word)
+        #print(text)
         #Go through the words in the text
         count_occurences = sum(1 for elem in text if word == elem)
         
         return count_occurences
-    
+
+
+def filter_text(text):
+    """Create a translation table that maps all uppercase ASCII characters to lowercase
+    and maps all special characters to none, except for the apostrophe"""
+    # Create a translation dictionary for uppercase to lowercase conversion
+    upper_to_lower_trans = {ord(upper): lower for upper, lower in zip(string.ascii_uppercase, string.ascii_lowercase)}
+
+    # Create a translation dictionary to replace special characters with space (except for ')
+    special_to_space_trans = {ord(char): ' ' for char in string.punctuation if char != "'"}
+
+    # Replace consecutive apostrophes with a single space using regular expressions
+    text = re.sub(r"''+", " ", text)
+
+    # Merge the two translation dictionaries
+    combined_trans = {**upper_to_lower_trans, **special_to_space_trans}
+
+    # Apply the translation
+    output_text = text.translate(combined_trans)
+
+    return output_text
+
+
+
+
+
+#count_occurrences_in_text('Linguist',  "'''Linguist Specialist Found Dead on Laboratory Floor'''")
+
+
+
+
 
 
 
@@ -216,9 +228,9 @@ def doit():
     return i
 
 
-
+#"""
 def test_profile():
     with cProfile.Profile() as pr:
         assert doit() == 2000
         pr.print_stats()
-
+#"""

@@ -1,5 +1,4 @@
 import cProfile
-from functools import lru_cache
 
 """In order to run the tests simply run
 
@@ -8,58 +7,34 @@ python -m pytest a9number_v3.py
 In order to see the profiling, you need to add the option -s
 """
 
-@lru_cache(maxsize=2**8)
-def count_occurrences_in_text(word, text):
+
+def count_occurrences_in_text(*arg):
     """
-    Return the number of occurrences of the passed word (case insensitive) in text
-    Trims text of the following characters : ,_.!?:\'
-    'word' can be either a single word or a series of word separated by empty spaces
-    If argument word contains either '' or __, gets rid of all ' and _ characters
+    Return the number of occurrences of the passed word (case insensitive) in text using recursion
     """
-    #Lowercases both string so that comparisons are case insensitive
-    word, text = word.lower(), text.lower()
-    
-    #Initialize result variable
-    count_occurences = 0
-
-    #Initialize set of symbols to remove from text
-    punctuation = ',_.!?:\''
-
-
-    #Case where pattern is a sentence
-    if ' ' in word:
-        #Remove space and punctuation from word 
-        for char in punctuation + ' ':
-            word = word.replace(char, '')
-
-        #Remove space and punctuation except : from text 
-        for char in ',_.!?\' ':
-            text = text.replace(char, '')
-        #Call to recursive function        
-        return word in text 
-    
-
-    #Case where pattern is a simple word
+    #arg[0] is word,
+    #arg[1] is text
+    if len(arg) == 3:
+        x = arg[1].find(arg[0])
+        print(arg)
+        if arg[1] == '':
+            return arg[2]
+        else:
+            return(count_occurrences_in_text(arg[0], arg[1][x+len(arg[0]):], arg[2]+1))
     else:
-        #Remove space and punctuation from text 
-        for char in punctuation:
-            if char != "'":
-                text = text.replace(char, ' ')
-            else:
-                if("''" in text):
-                    text = text.replace(char, '')
-
-        #Split the text into list of words using empty space as separator
-        text = text.split()
-
-        #Go through the words in the text
-        count_occurences = sum(1 for elem in text if word == elem)
-        
-        return count_occurences
+        return(count_occurrences_in_text(arg[0].lower(), arg[1].lower(), 0))
     
+"""
+def recursive_count_occurrences_in_text(word, text, number):
+    print("word : {}    text : {}   number : {}".format(word, text, number))
+    x = text.find(word)
+    if x == -1:
+        return(word, text, 0)
+    else:
+        return(word, text[x:], number+1)
+"""
 
-
-
+                                
 def test_count_occurrences_in_text():
     text = """Georges is my name and I like python. Oh ! your name is georges? And you like Python!
 Yes is is true, I like PYTHON
@@ -216,9 +191,9 @@ def doit():
     return i
 
 
-
+#"""
 def test_profile():
     with cProfile.Profile() as pr:
         assert doit() == 2000
         pr.print_stats()
-
+#"""
