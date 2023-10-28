@@ -1,6 +1,5 @@
 import cProfile
 
-
 """In order to run the tests simply run
 
 python -m pytest a9number_v3.py
@@ -8,15 +7,53 @@ python -m pytest a9number_v3.py
 In order to see the profiling, you need to add the option -s
 """
 
+
 def count_occurrences_in_text(word, text):
     """
     Return the number of occurrences of the passed word (case insensitive) in text
+    Trims text of the following characters : .,?!;:()[]{}"
+    'word' can be either a single word or a series of word separated by empty spaces
+    If argument word contains either '' or __, gets rid of all ' and _ characters after trim
     """
+    #Lowercases both string so that comparisons are case insensitive
+    word = word.lower()
+    text = text.lower()
 
-    # TODO: your code goes here, but it's OK to add new functions or import modules if needed
+    #Case where pattern is a sentence
+    if ' ' in word: 
+        if text.find(word) >= 0:
+            return 1
+        return 0
 
-    # This does not pass the unittests:
-    return text.count(word)
+    #Case where pattern is a simple word
+    else:
+        #Replace each punctuation in the text with an empty space
+        punctuation = '.,?!;:()[]{}"'
+        for char in punctuation:
+            text = text.replace(char, ' ')
+
+        #Splits the text into list of words using empty space as separator
+        text = text.split()
+
+        #Initialize result variable
+        count_occurences = 0
+
+        #Go through the words in the text
+        for elem in text:
+            #Handling of case where text starts or finishes with several ' or _ characters
+            if "''" in elem or "__" in elem:
+                trimmed_elem = ''
+                for char in elem:
+                    if char != "\'" and char != "_":
+                        trimmed_elem += char
+                if trimmed_elem == word:
+                    count_occurences += 1
+            #Normal case
+            else:   
+                if elem == word:
+                    count_occurences +=1
+        
+        return count_occurences
 
 
 def test_count_occurrences_in_text():
@@ -175,7 +212,9 @@ def doit():
     return i
 
 
+#"""
 def test_profile():
     with cProfile.Profile() as pr:
         assert doit() == 2000
         pr.print_stats()
+#"""
