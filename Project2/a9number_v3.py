@@ -15,22 +15,20 @@ def count_occurrences_in_text(word, text):
     Trims text of the following characters : ,_.!?:'
     'word' can be either a single word or a series of word separated by empty spaces
     """
-    #Lowercases both string so that comparisons are case insensitive
-    word, text = word.lower(), text.lower()
+    """#Lowercases both string so that comparisons are case insensitive
+    word, text = word.lower(), text.lower()"""
 
     #Case where pattern is a sentence
     if ' ' in word:
         #Remove space and punctuation from word 
-        for char in ',_.!?\' ':
-            word = word.replace(char, '')
-            text = text.replace(char, '')
-
-        word = word.replace(':', '')      
+        word, text = ''.join([char for char in word if char not in ':,_.!?\' ']).lower(), ''.join([char for char in text if char not in ',_.!?\' ']).lower()
+      
         return word in text 
     
 
     #Case where pattern is a simple word
     else:
+        word, text = word.lower(), text.lower()
         #Remove space and punctuation from text 
         for char in ',_.!?:\'':
             if char != "'":
